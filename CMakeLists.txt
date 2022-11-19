@@ -66,6 +66,7 @@ set(
 	src/usbd_conf.c
 
 	include/can.h src/can.c
+	include/can_common.h src/can_common.c
 	include/dfu.h src/dfu.c
 	include/gpio.h src/gpio.c
 	include/led.h src/led.c
