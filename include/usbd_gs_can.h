@@ -30,6 +30,7 @@ THE SOFTWARE.
 #include <stdint.h>
 
 #include "can.h"
+#include "compiler.h"
 #include "config.h"
 #include "gs_usb.h"
 #include "led.h"
@@ -38,8 +39,13 @@ THE SOFTWARE.
 
 /* Define these here so they can be referenced in other files */
 
+#ifndef CONFIG_CANFD
 #define CAN_DATA_MAX_PACKET_SIZE 32    /* Endpoint IN & OUT Packet size */
 #define CAN_CMD_PACKET_SIZE		 64    /* Control Endpoint Packet size */
+#else
+#define CAN_DATA_MAX_PACKET_SIZE 80    /* Endpoint IN & OUT Packet size */
+#define CAN_CMD_PACKET_SIZE		 72    /* Control Endpoint Packet size */
+#endif
 #define USB_CAN_CONFIG_DESC_SIZ	 50
 #define NUM_CAN_CHANNEL			 1
 #define USBD_GS_CAN_VENDOR_CODE	 0x20
@@ -48,7 +54,13 @@ THE SOFTWARE.
 
 extern USBD_ClassTypeDef USBD_GS_CAN;
 
+#ifdef CONFIG_CANFD
+#define GS_HOST_FRAME_SIZE struct_size((struct gs_host_frame *)NULL, canfd_ts, 1)
+#else
 #define GS_HOST_FRAME_SIZE struct_size((struct gs_host_frame *)NULL, classic_can_ts, 1)
+#endif
+
+static_assert(CAN_DATA_MAX_PACKET_SIZE >= GS_HOST_FRAME_SIZE);
 
 struct gs_host_frame_object {
 	struct list_head list;
