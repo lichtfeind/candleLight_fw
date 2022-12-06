@@ -208,7 +208,7 @@ static const uint8_t USBD_MS_EXT_PROP_FEATURE_DESC[] = {
 
 // device info
 static const struct gs_device_config USBD_GS_CAN_dconf = {
-	.icount = 0,
+	.icount = 1,
 	.sw_version = 2,
 	.hw_version = 1,
 };
@@ -547,6 +547,7 @@ static uint8_t USBD_GS_CAN_EP0_RxReady(USBD_HandleTypeDef *pdev) {
 				hcan->timestamps_enabled = (mode->flags & GS_CAN_MODE_HW_TIMESTAMP) != 0;
 				hcan->pad_pkts_to_max_pkt_size = (mode->flags & GS_CAN_MODE_PAD_PKTS_TO_MAX_PKT_SIZE) != 0;
 
+				if (req->wValue == 0) {
 				can_enable(channel,
 						   (mode->flags & GS_CAN_MODE_LOOP_BACK) != 0,
 						   (mode->flags & GS_CAN_MODE_LISTEN_ONLY) != 0,
@@ -554,6 +555,7 @@ static uint8_t USBD_GS_CAN_EP0_RxReady(USBD_HandleTypeDef *pdev) {
 				           // triple sampling not supported on bxCAN
 						   );
 
+				}
 				led_set_mode(&channel->leds, led_mode_normal);
 			}
 			break;
@@ -565,8 +567,10 @@ static uint8_t USBD_GS_CAN_EP0_RxReady(USBD_HandleTypeDef *pdev) {
 			if (imode->mode) {
 				led_run_sequence(&channel->leds, led_identify_seq, -1);
 			} else {
+				if (req->wValue == 0) {
 				led_set_mode(&channel->leds, can_is_enabled(channel) ?
 							 led_mode_normal : led_mode_off);
+					}
 			}
 			break;
 		}
@@ -615,6 +619,11 @@ static uint8_t USBD_GS_CAN_DataOut(USBD_HandleTypeDef *pdev, uint8_t epnum) {
 
 	channel = USBD_GS_CAN_GetChannel(hcan, hcan->from_host_buf->frame.channel);
 	if (!channel) {
+		goto out_prepare_receive;
+	}
+	
+	// just drop any other packet until we have some hardware to send it with
+	if ( hcan->from_host_buf->frame.channel != 0) {
 		goto out_prepare_receive;
 	}
 
@@ -848,7 +857,7 @@ void USBD_GS_CAN_SuspendCallback(USBD_HandleTypeDef  *pdev)
 	// Disable CAN and go off bus on USB suspend
 	USBD_GS_CAN_HandleTypeDef *hcan = (USBD_GS_CAN_HandleTypeDef*) pdev->pClassData;
 
-	for (uint32_t i=0; i<NUM_CAN_CHANNEL; i++) {
+	for (uint32_t i=0; i<1; i++) {
 		can_data_t *channel = &hcan->channels[i];
 
 		can_disable(channel);

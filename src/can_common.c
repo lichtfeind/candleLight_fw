@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 */
 
+#include <string.h> // FIXME: remove
 #include "can_common.h"
 #include "led.h"
 #include "timer.h"
@@ -65,6 +66,7 @@ void CAN_SendFrame(USBD_GS_CAN_HandleTypeDef *hcan, can_data_t *channel)
 void CAN_ReceiveFrame(USBD_GS_CAN_HandleTypeDef *hcan, can_data_t *channel)
 {
 	struct gs_host_frame_object *frame_object;
+	struct gs_host_frame_object *frame_object2;
 
 	if (!can_is_rx_pending(channel)) {
 		return;
@@ -84,6 +86,7 @@ void CAN_ReceiveFrame(USBD_GS_CAN_HandleTypeDef *hcan, can_data_t *channel)
 
 	struct gs_host_frame *frame = &frame_object->frame;
 
+	// Did we get a frame? If not put frame object back into the pool
 	if (!can_receive(channel, frame)) {
 		list_add_tail_locked(&frame_object->list, &hcan->list_frame_pool);
 		return;
@@ -96,6 +99,25 @@ void CAN_ReceiveFrame(USBD_GS_CAN_HandleTypeDef *hcan, can_data_t *channel)
 	frame->reserved = 0;
 
 	list_add_tail_locked(&frame_object->list, &hcan->list_to_host);
+
+	// Send same pkt over channel 1
+	was_irq_enabled = disable_irq();
+	frame_object2 = list_first_entry_or_null(&hcan->list_frame_pool,
+											struct gs_host_frame_object,
+											list);
+	if (!frame_object2) {
+		restore_irq(was_irq_enabled);
+		return;
+	}
+
+	list_del(&frame_object2->list);
+	restore_irq(was_irq_enabled);
+
+	frame_object2->frame.can_id = frame_object->frame.can_id;
+	frame_object2->frame.can_dlc = frame_object->frame.can_dlc;
+	memcpy(frame_object2->frame.classic_can->data, frame_object->frame.classic_can->data, 8);
+	frame_object2->frame.channel = 1;
+	list_add_tail_locked(&frame_object2->list, &hcan->list_to_host);
 
 	led_indicate_trx(&channel->leds, LED_RX);
 }
