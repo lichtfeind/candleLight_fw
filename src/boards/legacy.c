@@ -138,31 +138,19 @@ void legacy_setup(USBD_GS_CAN_HandleTypeDef *hGS_CAN) {
 
 	// LEDs
 
-
 	for (unsigned int i = 0; i < ARRAY_SIZE(hGS_CAN->channels); i++) {
 		can_data_t *channel = &hGS_CAN->channels[i];
-
-		INIT_LIST_HEAD(&channel->list_from_host);
 
 		led_init(&channel->leds,
 				 LEDRX_GPIO_Port, LEDRX_Pin, LEDRX_Active_High,
 				 LEDTX_GPIO_Port, LEDTX_Pin, LEDTX_Active_High);
+	}
 
-		/* nice wake-up pattern */
-		for (uint8_t j = 0; j < 10; j++) {
-			HAL_GPIO_TogglePin(LEDRX_GPIO_Port, LEDRX_Pin);
-			HAL_Delay(50);
-			HAL_GPIO_TogglePin(LEDTX_GPIO_Port, LEDTX_Pin);
-		}
-
-		led_set_mode(&channel->leds, led_mode_off);
-
-		can_init(channel, config.channels[i].interface);
-		can_disable(channel);
-
-#ifdef CAN_S_GPIO_Port
-		HAL_GPIO_WritePin(CAN_S_GPIO_Port, CAN_S_Pin, GPIO_PIN_RESET);
-#endif
+	/* nice wake-up pattern */
+	for (uint8_t j = 0; j < 10; j++) {
+		HAL_GPIO_TogglePin(LEDRX_GPIO_Port, LEDRX_Pin);
+		HAL_Delay(50);
+		HAL_GPIO_TogglePin(LEDTX_GPIO_Port, LEDTX_Pin);
 	}
 }
 void legacy_phy_pwr(can_data_t *hGS_CAN, bool state) {
