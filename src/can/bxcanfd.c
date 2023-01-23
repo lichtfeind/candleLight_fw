@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 */
 
+#include "board.h"
 #include "can.h"
 #include "config.h"
 #include "gpio.h"
@@ -173,10 +174,7 @@ void can_enable(can_data_t *channel, uint32_t mode)
 								 FDCAN_ACCEPT_IN_RX_FIFO0, FDCAN_ACCEPT_IN_RX_FIFO0,
 								 FDCAN_FILTER_REMOTE, FDCAN_FILTER_REMOTE);
 
-#ifdef nCANSTBY_Pin
-	HAL_GPIO_WritePin(nCANSTBY_Port, nCANSTBY_Pin, !GPIO_INIT_STATE(nCANSTBY_Active_High));
-#endif
-
+	config.set_phy_pwr(channel, true);
 	// Start CAN using HAL
 	HAL_FDCAN_Start(&channel->channel);
 }
@@ -185,9 +183,7 @@ void can_disable(can_data_t *channel)
 {
 	HAL_FDCAN_Stop(&channel->channel);
 
-#ifdef nCANSTBY_Pin
-	HAL_GPIO_WritePin(nCANSTBY_Port, nCANSTBY_Pin, GPIO_INIT_STATE(nCANSTBY_Active_High));
-#endif
+	config.set_phy_pwr(channel, false);
 }
 
 bool can_is_enabled(can_data_t *channel)

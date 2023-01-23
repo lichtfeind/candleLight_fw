@@ -82,15 +82,49 @@ void nucleo_g0b1re_setup(USBD_GS_CAN_HandleTypeDef *hGS_CAN) {
 	HAL_GPIO_WritePin(CAN_S_GPIO_Port, CAN_S_Pin, GPIO_PIN_RESET);
 #endif
 
-
 }
-void nucleo_g0b1re_phy_pwr(can_data_t *hGS_CAN, bool state) {
-	UNUSED(hGS_CAN);
+
+void nucleo_g0b1re_phy_pwr(can_data_t *channel, bool state) {
+	UNUSED(channel);
+	UNUSED(state);
+	if(state) {
+#ifdef nCANSTBY_Pin
+		HAL_GPIO_WritePin(nCANSTBY_Port, nCANSTBY_Pin, !GPIO_INIT_STATE(nCANSTBY_Active_High));
+#endif
+	} else {
+#ifdef nCANSTBY_Pin
+		HAL_GPIO_WritePin(nCANSTBY_Port, nCANSTBY_Pin, GPIO_INIT_STATE(nCANSTBY_Active_High));
+#endif
+	}
+}
+
+enum gs_can_termination_state nucleo_g0b1re_set_term(
+	can_data_t *channel,
+	enum gs_can_termination_state state
+) {
+	UNUSED(channel);
+	UNUSED(state);
+	return GS_CAN_TERMINATION_UNSUPPORTED;
+}
+
+enum gs_can_termination_state nucleo_g0b1re_get_term(
+	can_data_t *channel
+) {
+	UNUSED(channel);
+	return GS_CAN_TERMINATION_UNSUPPORTED;
+}
+
+void nucleo_g0b1re_set_standby(can_data_t *channel, bool state) {
+	UNUSED(channel);
 	UNUSED(state);
 }
 
 const struct BoardConfig config = {
 	.setup = nucleo_g0b1re_setup,
+	.set_phy_pwr = nucleo_g0b1re_phy_pwr,
+	.set_term = nucleo_g0b1re_set_term,
+	.get_term = nucleo_g0b1re_get_term,
+	.set_standby = nucleo_g0b1re_set_standby,
 
 	.usbd_product_string = USBD_PRODUCT_STRING_FS,
 	.usbd_manufacturer_string = USBD_MANUFACTURER_STRING,
@@ -103,11 +137,9 @@ const struct BoardConfig config = {
 	// Array of channel configs
 	.channels = {
 		[0] = {
-			.set_phy_pwr = nucleo_g0b1re_phy_pwr,
 			.interface = FDCAN1,
 		},
 		[1] = {
-			.set_phy_pwr = nucleo_g0b1re_phy_pwr,
 			.interface = FDCAN2,
 		},
 	},

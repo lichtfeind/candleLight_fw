@@ -153,14 +153,47 @@ void legacy_setup(USBD_GS_CAN_HandleTypeDef *hGS_CAN) {
 		HAL_GPIO_TogglePin(LEDTX_GPIO_Port, LEDTX_Pin);
 	}
 }
-void legacy_phy_pwr(can_data_t *hGS_CAN, bool state) {
-	UNUSED(hGS_CAN);
-	UNUSED(state);
 
+void legacy_phy_pwr(can_data_t *channel, bool state) {
+	UNUSED(channel);
+	UNUSED(state);
+	if(state) {
+#ifdef nCANSTBY_Pin
+		HAL_GPIO_WritePin(nCANSTBY_Port, nCANSTBY_Pin, !GPIO_INIT_STATE(nCANSTBY_Active_High));
+#endif
+	} else {
+#ifdef nCANSTBY_Pin
+		HAL_GPIO_WritePin(nCANSTBY_Port, nCANSTBY_Pin, GPIO_INIT_STATE(nCANSTBY_Active_High));
+#endif
+	}
+}
+
+enum gs_can_termination_state legacy_set_term(
+	can_data_t *channel,
+	enum gs_can_termination_state state
+) {
+	UNUSED(channel);
+	UNUSED(state);
+	return GS_CAN_TERMINATION_UNSUPPORTED;
+}
+
+enum gs_can_termination_state legacy_get_term(
+	can_data_t *channel
+) {
+	UNUSED(channel);
+	return GS_CAN_TERMINATION_UNSUPPORTED;
+}
+
+void legacy_set_standby(can_data_t *channel, bool state) {
+	UNUSED(channel);
+	UNUSED(state);
 }
 
 const struct BoardConfig config = {
 	.setup = legacy_setup,
+	.set_phy_pwr = legacy_phy_pwr,
+	.set_term = legacy_set_term,
+	.get_term = legacy_get_term,
 
 	.usbd_product_string = USBD_PRODUCT_STRING_FS,
 	.usbd_manufacturer_string = USBD_MANUFACTURER_STRING,

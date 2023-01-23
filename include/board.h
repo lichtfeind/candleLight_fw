@@ -29,9 +29,6 @@ THE SOFTWARE.
 #include "usbd_gs_can.h"
 
 struct BoardChannelConfig {
-	void (* set_phy_pwr)(can_data_t *channel, bool state);
-	enum gs_can_termination_state (* set_term)(can_data_t *channel, enum gs_can_termination_state state);
-	enum gs_can_termination_state (* get_term)(can_data_t *channel, enum gs_can_termination_state state);
 #if defined(STM32G0)
 	FDCAN_GlobalTypeDef *interface;
 #else
@@ -42,6 +39,13 @@ struct BoardChannelConfig {
 struct BoardConfig {
 	// Callback setup: clock, LEDs, GPIO, CAN Pinmux
 	void (* setup)(USBD_GS_CAN_HandleTypeDef * hGS_CAN);
+	// Callback: called to enable/disable CAN Phy power
+	void (* set_phy_pwr)(can_data_t *channel, bool state);
+	// Callback: called to enable/disable CAN termination resistor
+	enum gs_can_termination_state (* set_term)(can_data_t *channel, enum gs_can_termination_state state);
+	// Callback: called to get state of CAN termination resistor
+	enum gs_can_termination_state (* get_term)(can_data_t *channel);
+	void (* set_standby)(can_data_t *channel, bool state);
 	// USBD strings
 	const uint8_t *usbd_product_string;
 	const uint8_t *usbd_manufacturer_string;
