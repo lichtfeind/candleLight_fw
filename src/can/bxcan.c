@@ -30,6 +30,7 @@
 #include "gpio.h"
 #include "gs_usb.h"
 #include "hal_include.h"
+#include "timer.h"
 
 // The STM32F0 only has one CAN interface, define it as CAN1 as
 // well, so it doesn't need to be handled separately.
