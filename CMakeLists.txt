@@ -68,6 +68,7 @@ set(
 	include/can.h
 	include/can_common.h src/can_common.c
 	include/device.h
+	include/board.h
 	include/dfu.h src/dfu.c
 	include/gpio.h src/gpio.c
 	include/led.h src/led.c
@@ -220,6 +221,7 @@ function(add_f042_target TGTNAME)
 	target_compile_definitions(${TGTNAME}_fw PRIVATE BOARD_${TGTNAME} STM32F0)
 	target_sources(${TGTNAME}_fw PRIVATE "src/device/device_f0.c")
 	target_sources(${TGTNAME}_fw PRIVATE "src/can/bxcan.c")
+	target_sources(${TGTNAME}_fw PRIVATE "src/boards/legacy.c")
 	target_link_options(${TGTNAME}_fw BEFORE PRIVATE ${CPUFLAGS_F0})
 	target_link_libraries(${TGTNAME}_fw PRIVATE STM32_HAL_STM32F042x6 STM32_USB_Device_Library_STM32F042x6)
 endfunction()
@@ -230,6 +232,7 @@ function(add_f072_target TGTNAME)
 	target_compile_definitions(${TGTNAME}_fw PRIVATE BOARD_${TGTNAME} STM32F0)
 	target_sources(${TGTNAME}_fw PRIVATE "src/device/device_f0.c")
 	target_sources(${TGTNAME}_fw PRIVATE "src/can/bxcan.c")
+	target_sources(${TGTNAME}_fw PRIVATE "src/boards/legacy.c")
 	target_link_options(${TGTNAME}_fw BEFORE PRIVATE ${CPUFLAGS_F0})
 	target_link_libraries(${TGTNAME}_fw PRIVATE STM32_HAL_STM32F072xB STM32_USB_Device_Library_STM32F072xB)
 
@@ -241,6 +244,7 @@ function(add_f407_target TGTNAME)
 	target_compile_options(${TGTNAME}_fw BEFORE PRIVATE ${CPUFLAGS_F4})
 	target_sources(${TGTNAME}_fw PRIVATE "src/device/device_f4.c")
 	target_sources(${TGTNAME}_fw PRIVATE "src/can/bxcan.c")
+	target_sources(${TGTNAME}_fw PRIVATE "src/boards/legacy.c")
 	target_link_options(${TGTNAME}_fw BEFORE PRIVATE ${CPUFLAGS_F4})
 	target_link_libraries(${TGTNAME}_fw PRIVATE STM32_HAL_STM32F407xE STM32_USB_Device_Library_STM32F407xE)
 endfunction()
@@ -251,6 +255,7 @@ function(add_g0b1_target TGTNAME)
 	target_compile_options(${TGTNAME}_fw BEFORE PRIVATE ${CPUFLAGS_G0})
 	target_sources(${TGTNAME}_fw PRIVATE "src/device/device_g0.c")
 	target_sources(${TGTNAME}_fw PRIVATE "src/can/bxcanfd.c")
+	target_sources(${TGTNAME}_fw PRIVATE "src/boards/nuclue_g0b1re.c")
 	target_link_options(${TGTNAME}_fw BEFORE PRIVATE ${CPUFLAGS_G0})
 	target_link_libraries(${TGTNAME}_fw PRIVATE STM32_HAL_STM32G0B1xK STM32_USB_Device_Library_STM32G0B1xK)
 endfunction()

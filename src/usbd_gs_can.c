@@ -42,6 +42,7 @@ THE SOFTWARE.
 #include "usbd_gs_can.h"
 #include "usbd_ioreq.h"
 #include "util.h"
+#include "board.h"
 
 static volatile bool is_usb_suspend_cb = false;
 
@@ -699,7 +700,7 @@ uint8_t *USBD_GS_CAN_GetStrDesc(USBD_HandleTypeDef *pdev, uint8_t index, uint16_
 
 	switch (index) {
 		case DFU_INTERFACE_STR_INDEX:
-			USBD_GetString(DFU_INTERFACE_STRING_FS, USBD_DescBuf, length);
+			USBD_GetString((uint8_t *) config.dfu_interface_name, USBD_DescBuf, length);
 			return USBD_DescBuf;
 		case 0xEE:
 			*length = sizeof(USBD_GS_CAN_WINUSB_STR);

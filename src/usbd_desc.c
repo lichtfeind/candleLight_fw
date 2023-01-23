@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include "usbd_ctlreq.h"
 #include "usbd_desc.h"
 #include "util.h"
+#include "board.h"
 
 static uint8_t *USBD_FS_DeviceDescriptor(USBD_SpeedTypeDef speed, uint16_t *length);
 static uint8_t *USBD_FS_LangIDStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length);
@@ -106,14 +107,14 @@ uint8_t *USBD_FS_LangIDStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
 uint8_t *USBD_FS_ProductStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
 {
 	UNUSED(speed);
-	USBD_GetString(USBD_PRODUCT_STRING_FS, USBD_DescBuf, length);
+	USBD_GetString((uint8_t *) config.usbd_product_string, USBD_DescBuf, length);
 	return USBD_DescBuf;
 }
 
 uint8_t *USBD_FS_ManufacturerStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
 {
 	UNUSED(speed);
-	USBD_GetString (USBD_MANUFACTURER_STRING, USBD_DescBuf, length);
+	USBD_GetString((uint8_t *) config.usbd_manufacturer_string, USBD_DescBuf, length);
 	return USBD_DescBuf;
 }
 

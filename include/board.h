@@ -1,8 +1,10 @@
+#pragma once
+
 /*
 
 The MIT License (MIT)
 
-Copyright (c) 2016 Hubert Denkmair
+Copyright (c) 2022 fenugrec
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,29 +26,33 @@ THE SOFTWARE.
 
 */
 
-#include "config.h"
-#include "hal_include.h"
-#include "timer.h"
-#include "board.h"
+#include "usbd_gs_can.h"
 
-void timer_init(void)
-{
-	__HAL_RCC_TIM2_CLK_ENABLE();
+struct BoardChannelConfig {
+	void (* set_phy_pwr)(can_data_t *channel, bool state);
+	enum gs_can_termination_state (* set_term)(can_data_t *channel, enum gs_can_termination_state state);
+	enum gs_can_termination_state (* get_term)(can_data_t *channel, enum gs_can_termination_state state);
+#if defined(STM32G0)
+	FDCAN_GlobalTypeDef *interface;
+#else
+	CAN_TypeDef *interface;
+#endif
+};
 
-	TIM2->CR1 = 0;
-	TIM2->CR2 = 0;
-	TIM2->SMCR = 0;
-	TIM2->DIER = 0;
-	TIM2->CCMR1 = 0;
-	TIM2->CCMR2 = 0;
-	TIM2->CCER = 0;
-	TIM2->PSC = (config.timer_clock_speed / 1000000) - 1;   // run @1MHz = 1us
-	TIM2->ARR = 0xFFFFFFFF;
-	TIM2->CR1 |= TIM_CR1_CEN;
-	TIM2->EGR = TIM_EGR_UG;
-}
+struct BoardConfig {
+	// Callback setup: clock, LEDs, GPIO, CAN Pinmux
+	void (* setup)(USBD_GS_CAN_HandleTypeDef * hGS_CAN);
+	// USBD strings
+	const uint8_t *usbd_product_string;
+	const uint8_t *usbd_manufacturer_string;
+	const uint8_t *dfu_interface_name;
+	// TIM2 Clock speed
+	uint32_t timer_clock_speed;
 
-uint32_t timer_get(void)
-{
-	return TIM2->CNT;
-}
+	// CAN config
+	uint32_t can_clock_speed;
+	// Array of channel configs
+	struct BoardChannelConfig channels[NUM_CAN_CHANNEL];
+};
+
+extern const struct BoardConfig config;
