@@ -263,7 +263,7 @@ THE SOFTWARE.
 	#define CAN_INTERFACE			 FDCAN1
 	#define CAN_INTERFACE2			 FDCAN2
 	#define CAN_CLOCK_SPEED			 40000000
-	#define NUM_CAN_CHANNEL			 1
+	#define NUM_CAN_CHANNEL			 2
 	#define CONFIG_CANFD			 1
 
 	#define nCANSTBY_Port			 GPIOA

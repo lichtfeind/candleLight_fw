@@ -110,12 +110,14 @@ const struct BoardConfig config = {
 
 	.can_clock_speed = 40000000,
 	// Array of channel configs
-	.channels = {{
-					 .set_phy_pwr = nuclue_g0b1re_phy_pwr,
-					 .interface = FDCAN1,
-				 },
-				 {
-					 .set_phy_pwr = nuclue_g0b1re_phy_pwr,
-					 .interface = FDCAN2,
-				 }},
+	.channels = {
+		[0] = {
+			.set_phy_pwr = nuclue_g0b1re_phy_pwr,
+			.interface = FDCAN1,
+		},
+		[1] = {
+			.set_phy_pwr = nuclue_g0b1re_phy_pwr,
+			.interface = FDCAN2,
+		},
+	},
 };
