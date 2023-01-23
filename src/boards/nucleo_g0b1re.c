@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include "gpio.h"
 #include "usbd_gs_can.h"
 
-void nuclue_g0b1re_setup(USBD_GS_CAN_HandleTypeDef *hGS_CAN) {
+void nucleo_g0b1re_setup(USBD_GS_CAN_HandleTypeDef *hGS_CAN) {
 	// Clock setup
 	// Systick setup
 	device_sysclock_config();
@@ -93,13 +93,13 @@ void nuclue_g0b1re_setup(USBD_GS_CAN_HandleTypeDef *hGS_CAN) {
 #endif
 	}
 }
-void nuclue_g0b1re_phy_pwr(can_data_t *hGS_CAN, bool state) {
+void nucleo_g0b1re_phy_pwr(can_data_t *hGS_CAN, bool state) {
 	UNUSED(hGS_CAN);
 	UNUSED(state);
 }
 
 const struct BoardConfig config = {
-	.setup = nuclue_g0b1re_setup,
+	.setup = nucleo_g0b1re_setup,
 
 	.usbd_product_string = USBD_PRODUCT_STRING_FS,
 	.usbd_manufacturer_string = USBD_MANUFACTURER_STRING,
@@ -112,11 +112,11 @@ const struct BoardConfig config = {
 	// Array of channel configs
 	.channels = {
 		[0] = {
-			.set_phy_pwr = nuclue_g0b1re_phy_pwr,
+			.set_phy_pwr = nucleo_g0b1re_phy_pwr,
 			.interface = FDCAN1,
 		},
 		[1] = {
-			.set_phy_pwr = nuclue_g0b1re_phy_pwr,
+			.set_phy_pwr = nucleo_g0b1re_phy_pwr,
 			.interface = FDCAN2,
 		},
 	},
