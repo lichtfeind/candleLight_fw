@@ -56,9 +56,9 @@ static void rcc_reset(CAN_TypeDef *instance)
 #endif
 }
 
-void can_init(can_data_t *channel, CAN_TypeDef *instance)
+void can_init(can_data_t *channel, uint8_t channel_number, CAN_TypeDef *instance)
 {
-	device_can_init(channel, instance);
+	device_can_init(channel, channel_number, instance);
 }
 
 bool can_set_bittiming(can_data_t *channel, uint16_t brp, uint8_t phase_seg1, uint8_t phase_seg2, uint8_t sjw)

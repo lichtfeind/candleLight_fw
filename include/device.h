@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include "hal_include.h"
 
 #if !defined(STM32G0)
-void device_can_init(can_data_t *channel, CAN_TypeDef *instance);
+void device_can_init(can_data_t *channel, uint8_t channel_number, CAN_TypeDef *instance);
 #endif
 
 void device_sysclock_config(void);

@@ -31,8 +31,10 @@ THE SOFTWARE.
 #include "stm32g0b1xx.h"
 #include "timer.h"
 
-void can_init(can_data_t *channel, FDCAN_GlobalTypeDef *instance)
+void can_init(can_data_t *channel, uint8_t channel_number, FDCAN_GlobalTypeDef *instance)
 {
+	channel->nr         = channel_number;
+
 	RCC_PeriphCLKInitTypeDef PeriphClkInit = {
 		.PeriphClockSelection = RCC_PERIPHCLK_FDCAN,
 		.FdcanClockSelection = RCC_FDCANCLKSOURCE_PLL,

@@ -48,13 +48,14 @@ typedef struct {
 	uint8_t phase_seg1;
 	uint8_t phase_seg2;
 	uint8_t sjw;
+	/** Channel number */
 	uint8_t nr;
 } can_data_t;
 
 #if defined(STM32G0)
-void can_init(can_data_t *channel, FDCAN_GlobalTypeDef *instance);
+void can_init(can_data_t *channel, uint8_t channel_number, FDCAN_GlobalTypeDef *instance);
 #else
-void can_init(can_data_t *channel, CAN_TypeDef *instance);
+void can_init(can_data_t *channel, uint8_t channel_number, CAN_TypeDef *instance);
 #endif
 bool can_set_bittiming(can_data_t *channel, uint16_t brp, uint8_t phase_seg1, uint8_t phase_seg2, uint8_t sjw);
 

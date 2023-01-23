@@ -73,7 +73,7 @@ int main(void)
 
 		led_set_mode(&channel->leds, led_mode_off);
 
-		can_init(channel, config.channels[i].interface);
+		can_init(channel, i, config.channels[i].interface);
 		can_disable(channel);
 	}
 

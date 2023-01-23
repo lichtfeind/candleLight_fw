@@ -31,7 +31,7 @@ THE SOFTWARE.
 #include "device.h"
 #include "hal_include.h"
 
-void device_can_init(can_data_t *channel, CAN_TypeDef *instance) {
+void device_can_init(can_data_t *channel, u8 channel_number, CAN_TypeDef *instance) {
 	__HAL_RCC_CAN1_CLK_ENABLE();
 
 	GPIO_InitTypeDef itd;
@@ -48,6 +48,7 @@ void device_can_init(can_data_t *channel, CAN_TypeDef *instance) {
 	channel->sjw        = 1;
 	channel->phase_seg1 = 13;
 	channel->phase_seg2 = 2;
+	channel->nr         = channel_number;
 	return;
 }
 
